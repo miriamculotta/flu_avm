@@ -1,15 +1,20 @@
+import 'package:flu_avm/presentation/providers/providers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flu_avm/Config/config.dart';
+import 'package:flu_avm/config/config.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 
 
-class BandsScreen extends StatelessWidget {
+class BandsScreen extends ConsumerWidget {
   const BandsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+
+    final bands = ref.watch(bandsProvider);
+    
     return Scaffold(
       appBar: AppBar(
         title: Text('Bandas'),
@@ -17,23 +22,22 @@ class BandsScreen extends StatelessWidget {
       body: ListView.builder(
         itemCount: bands.length,
         itemBuilder: (context, i) {
-          return _bandTile(bands[i]);
+          return _bandTile(context, ref, bands[i]);
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => addereNovumBand(context),
+        onPressed: () => addereNovumBand(context, ref),
         child: Icon(Icons.add),
       ),
     );
   }
 
-  Widget _bandTile(Band band) {
+  Widget _bandTile(BuildContext context, WidgetRef ref, Band band) {
     return Dismissible(
       key: Key(band.id),
        direction: DismissDirection.startToEnd,
        onDismissed: (direction) {
-        print('direction: $direction');
-        print('${band.id}');
+        ref.read(bandsProvider.notifier).delereBand(band);
        },
        background: Container(
         padding: EdgeInsets.only(left: 8.0),
@@ -53,13 +57,14 @@ class BandsScreen extends StatelessWidget {
           style: TextStyle(fontSize: 20),
         ),
         onTap: () {
-          print(band.nomen);
+          ref.read(bandsProvider.notifier).addereVotum(band);
         },
       ),
     );
   }
 
-  void addereNovumBand(BuildContext context) {
+  addereNovumBand(BuildContext context, WidgetRef ref) {
+
     final TextEditingController textumController = TextEditingController();
 /*
     showDialog(
@@ -104,7 +109,7 @@ showCupertinoDialog(
           isDefaultAction: true,
           child: const Text('Add'),
           onPressed: () {
-            addereBandaAdCollection(context, textumController.text);
+            addereBandaAdCollection(context, ref, textumController.text);
             context.pop();
           }
         ),
@@ -118,9 +123,17 @@ showCupertinoDialog(
 );
   }
 
-  void addereBandaAdCollection(BuildContext context, String nomen) {
-   print(nomen);
-   context.pop();
+  void addereBandaAdCollection(BuildContext context, WidgetRef ref, String nomen) {
+   
+   if (nomen.length > 1) {
+    ref.read(bandsProvider.notifier).addereBand(
+      Band(
+        id: DateTime.now().toString(), 
+        nomen: nomen, 
+        numerusVotum: 0
+        ));  
+   }
+
   }
 
 
