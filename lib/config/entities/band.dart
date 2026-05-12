@@ -4,22 +4,37 @@ class Band {
   String nomen;
   int numerusVotum;
 
-  Band ({
+  Band({
     required this.id,
     required this.nomen,
-    required this.numerusVotum, 
+    required this.numerusVotum,
   });
 
-  Band copyWith ({
-    String? id,
-    String? nomen,
-    int? numerusVotum,
-  }) {
+Band copyWith({String? id, String? nomen, int? numerusVotum}) {
     return Band(
-    id: id ?? this.id,
-    nomen: nomen ?? this.nomen,
-    numerusVotum: numerusVotum ?? this.numerusVotum,
-  );
+      id: id ?? this.id,
+      nomen: nomen ?? this.nomen,
+      numerusVotum: numerusVotum ?? this.numerusVotum,
+    );
+  }
+
+factory Band.fromMap(Map<String, dynamic> obj) {
+    return Band(
+      id: obj['id'],
+      nomen: obj['nomen'],
+      numerusVotum: obj['numerusVotum']
+    );
+  }
+
+  
 }
 
-}
+
+
+
+
+
+
+
+
+

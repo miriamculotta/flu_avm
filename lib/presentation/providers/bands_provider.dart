@@ -1,34 +1,99 @@
 
 import 'package:flu_avm/config/config.dart';
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
-final bandsProvider = StateNotifierProvider<BandsNotifier, List<Band>>((ref){
+
+// ignore: constant_identifier_names
+enum ServerStatus { Online, Offline, Connecting }
+
+final bandsProvider = StateNotifierProvider<BandsNotifier, BandsState>((ref){
   return BandsNotifier();
 });
 
+class BandsState {
 
-class BandsNotifier extends StateNotifier<List<Band>> {
-  
-  BandsNotifier() : super([
-  Band(id: '1', nomen: 'Metallica', numerusVotum: 5),
-  Band(id: '2', nomen: 'Queen', numerusVotum: 1),
-  Band(id: '3', nomen: 'Héroes del silencio', numerusVotum: 2),
-  Band(id: '4', nomen: 'Bon Jovi', numerusVotum: 5),
-  
-  ]); 
+final ServerStatus serverStatus;
+final IO.Socket socket;
+final List<Band> bands;
 
-  void addereBand(Band band) {
-    state = [...state, band];
+BandsState({
+  required this.serverStatus,
+  required this.socket,
+  required this.bands
+
+});
+
+BandsState copyWith({
+  ServerStatus? serverStatus,
+  IO.Socket? socket,
+  List<Band>? bands
+}) => BandsState(
+    serverStatus: serverStatus ?? this.serverStatus,
+    socket: socket ?? this.socket,
+    bands: bands ?? this.bands
+  );
+
+}
+
+class BandsNotifier extends StateNotifier<BandsState> {
+  BandsNotifier() : 
+  super(BandsState(
+    serverStatus: ServerStatus.Connecting,
+    socket: IO.io('http://localhost:3000',
+      IO.OptionBuilder()
+        .setTransports(['websocket'])
+        .enableAutoConnect()
+        .build()),
+    bands: []
+    ))
+     
+     {
+      _initCofig();
+     
+     }
+    
+  void _initCofig() {
+    state.socket.onConnect((_) {
+      state = state.copyWith(serverStatus: ServerStatus.Online);
+      
+    });
+
+    state.socket.onDisconnect((_) {
+      state = state.copyWith(serverStatus: ServerStatus.Offline);
+    });
   }
 
-  void delereBand(Band band) {
+
+
+
+/*
+class BandsNotifier extends StateNotifier<List<Band>> {
+  BandsNotifier() : super([
+    Band(id: '1', nomen: 'OneDirection', numerusVotum: 5),
+    Band(id: '2', nomen: 'Crepusculonas', numerusVotum: 1),
+    Band(id: '3', nomen: 'Zorrilla Girls', numerusVotum: 2), 
+    Band(id: '4', nomen: 'Kardachans', numerusVotum: 6), 
+    Band(id: '5', nomen: 'Valencia Ultraviolencia', numerusVotum: 8),
+  ]);
+
+  void addereBand(Band band){
+    state = [ ...state, band];
+  }
+
+  void delereBand (Band band){
     state = state.where((b) => b.id != band.id).toList();
   }
-   void addereVotum(Band band) {
-    state = state.map((b) {
-        return b.id == band.id 
-          ? b.copyWith(numerusVotum: b.numerusVotum + 1)  
+
+  void addereVotum(Band band){
+
+    state = state.map((b){
+      return b.id == band.id 
+        ? b.copyWith(numerusVotum: b.numerusVotum + 1)
         : b;
     }).toList();
+
+  }
+
 }
-}
+*/}
