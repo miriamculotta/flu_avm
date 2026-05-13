@@ -14,30 +14,40 @@ class BandsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
-    final bands = ref.watch(bandsProvider);
+    final bandsState = ref.watch(bandsProvider);
+
+    final serverStatus = ref.watch(bandsProvider).serverStatus;
     
     return Scaffold(
       appBar: AppBar(
         title: Text('Bandas'),
+        actions: [
+          Container(
+            margin: EdgeInsets.only(right: 10),
+            child: (serverStatus == ServerStatus.Online) 
+              ? Icon(Icons.check_circle, color: Colors.blue[300])
+              : Icon(Icons.offline_bolt, color: Colors.red[600]),
+          )
+        ]
       ),
+
       body: Column(
         children: [
-
-          _videreData(bands),
+          _videreData(bandsState.bands),
           const SizedBox(height: 20),
 
           Expanded(
             child: ListView.builder(
-              itemCount: bands.length,
+              itemCount: bandsState.bands.length,
               itemBuilder: (context, i) {
-                return _bandTile(context, ref, bands[i]);
+                return _bandTile(context, ref, bandsState.bands[i]);
               },
             ),
           ),
         ],
       ),
       floatingActionButton: Visibility(
-        visible: bands.length <7 ? true : false,
+        visible: bandsState.bands.length < 7 ? true : false,
         child: FloatingActionButton(
           onPressed: () => addereNovumBand(context, ref),
           child: Icon(Icons.add),
@@ -97,7 +107,7 @@ class BandsScreen extends ConsumerWidget {
       key: Key(band.id),
        direction: DismissDirection.startToEnd,
        onDismissed: (direction) {
-        ref.read(bandsProvider.notifier).delereBand(band);
+        ref.read(bandsProvider.notifier).delereBand(band.id);
        },
        background: Container(
         padding: EdgeInsets.only(left: 8.0),
@@ -117,7 +127,7 @@ class BandsScreen extends ConsumerWidget {
           style: TextStyle(fontSize: 20),
         ),
         onTap: () {
-          ref.read(bandsProvider.notifier).addereVotum(band);
+          ref.read(bandsProvider.notifier).addereVotum(band.id);
         },
       ),
     );
@@ -169,8 +179,10 @@ showCupertinoDialog(
           isDefaultAction: true,
           child: const Text('Add'),
           onPressed: () {
-            addereBandaAdCollection(context, ref, textumController.text);
-            context.pop();
+           /* addereBandaAdCollection(context, ref, textumController.text); */
+           ref.read(bandsProvider.notifier).addereBand(textumController.text);
+           context.pop();
+
           }
         ),
         CupertinoDialogAction(
@@ -183,7 +195,7 @@ showCupertinoDialog(
 );
   }
 
-  void addereBandaAdCollection(BuildContext context, WidgetRef ref, String nomen) {
+  /* void addereBandaAdCollection(BuildContext context, WidgetRef ref, String nomen) {
    
    if (nomen.length > 1) {
     ref.read(bandsProvider.notifier).addereBand(
@@ -194,7 +206,6 @@ showCupertinoDialog(
         ));             
    }
 
-  }
-
+  } */
 
 }
