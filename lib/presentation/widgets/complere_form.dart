@@ -126,7 +126,7 @@ class ComplereForm extends ConsumerWidget {
 
     if ( nameValue.isEmpty ) return;
     
-    // TODO: aqui pondremos el marcador 
+    ref.read(markerPositumProvider.notifier).state = true;
 
     print('name: $nameValue, color: $colorValue');
 
