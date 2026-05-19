@@ -1,5 +1,6 @@
 import 'package:flu_avm/presentation/providers/charta_provider.dart';
 import 'package:flu_avm/presentation/widgets/complere_form.dart';
+import 'package:flu_avm/presentation/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
@@ -14,17 +15,38 @@ class ChartaScreen extends ConsumerStatefulWidget {
 class _ChartaScreenState extends ConsumerState<ChartaScreen> {
   CircleAnnotationManager? _circleAnnotationManager;
 
+  Cancelable? _dragCancelable;
+
   void _initiareCircleAnnotations(MapboxMap mapboxMap) {
     mapboxMap.annotations.createCircleAnnotationManager().then((manager) {
       _circleAnnotationManager = manager;
+
+      _setupDragListener(manager);
 
       _addereVelRenovaMarker();
     });
   }
 
+  void _setupDragListener(CircleAnnotationManager manager) {
+    _dragCancelable?.cancel();
+
+    _dragCancelable = manager.dragEvents(
+      onChanged: (CircleAnnotation annotation) {
+        final pos = annotation.geometry.coordinates;
+        ref.read(coordsMarkerProvider.notifier).state = pos;
+      },
+      onEnd: (CircleAnnotation annotation) {
+        final pos = annotation.geometry.coordinates;
+        ref.read(coordsMarkerProvider.notifier).state = pos;
+      },
+    );
+  }
+
   Future<void> _addereVelRenovaMarker() async {
     final manager = _circleAnnotationManager;
     if (manager == null) return;
+
+    await manager.deleteAll();
 
     final placed = ref.read(markerPositumProvider);
 
@@ -33,7 +55,7 @@ class _ChartaScreenState extends ConsumerState<ChartaScreen> {
       return;
     }
 
-    final situs = Position(-122.467895, 37.800126);
+    final situs = ref.read(coordsMarkerProvider);
 
     final color = ref.read(formColorProvider);
 
@@ -53,6 +75,12 @@ class _ChartaScreenState extends ConsumerState<ChartaScreen> {
   }
 
   @override
+  void dispose() {
+    _dragCancelable?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     ref.listen<bool>(markerPositumProvider, (prev, next) {
       if (next == true) _addereVelRenovaMarker();
@@ -66,7 +94,7 @@ class _ChartaScreenState extends ConsumerState<ChartaScreen> {
           MapWidget(
             key: ValueKey('main_mapa'),
             cameraOptions: CameraOptions(
-              center: Point(coordinates: Position(-122.467895, 37.800126)),
+              center: Point(coordinates: initialisMarkerPositio),
               zoom: 14.5,
             ),
             styleUri: MapboxStyles.MAPBOX_STREETS,
@@ -75,7 +103,16 @@ class _ChartaScreenState extends ConsumerState<ChartaScreen> {
 
           Align(
             alignment: Alignment.topRight,
-            child: Padding(padding: EdgeInsets.all(12), child: ComplereForm()),
+            child: Padding(
+              padding: EdgeInsets.all(12),
+              child: ref.watch(markerPositumProvider)
+                  ? InformaUsoris(
+                      nomen: ref.watch(formNomenProvider),
+                      positio: ref.watch(coordsMarkerProvider),
+                      color: ref.watch(formColorProvider),
+                    )
+                  : ComplereForm(),
+            ),
           ),
         ],
       ),
