@@ -1,5 +1,6 @@
 import 'package:flu_avm/presentation/widgets/complere_form.dart';
 import 'package:flutter/material.dart';
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
 class ChartaScreen extends StatefulWidget {
   const ChartaScreen({super.key});
@@ -9,6 +10,11 @@ class ChartaScreen extends StatefulWidget {
 }
 
 class _ChartaScreenState extends State<ChartaScreen> {
+
+  void _initiareCircleAnnotations(MapboxMap mapboxMap) {
+    // Aquí puedes agregar anotaciones o realizar otras configuraciones iniciales del mapa
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,15 +24,18 @@ class _ChartaScreenState extends State<ChartaScreen> {
         body: Stack(
           fit: StackFit.expand,
           children: [
-            ColoredBox(
-              color: Colors.blueGrey,
-              child: Center(
-                child: Text(
-                  'Mapa a pantalla completa',
-                  style: TextStyle(color: Colors.white, fontSize: 30),
-                  )
-              )
+            MapWidget(
+              key: ValueKey('main_mapa'),
+              cameraOptions: CameraOptions(
+                center: Point(
+                  coordinates: Position(-122.467895, 37.800126)
+                ),
+                zoom: 14.5,
               ),
+              styleUri: MapboxStyles.MAPBOX_STREETS,
+              onMapCreated: _initiareCircleAnnotations,
+            ),
+    
               Align(
                 alignment: Alignment.topRight,
                 child: Padding(
