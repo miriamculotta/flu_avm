@@ -19,6 +19,10 @@ class ChartaService {
   final Map<String, Usor> _usores = {};
   late final StreamController<List<Usor>> _usoresController;
 
+  Stream<List<Usor>> get usoresStream => _usoresController.stream;
+
+  String? get meusSocketId => _socket?.id;
+
   ChartaService() {
     _usoresController = StreamController<List<Usor>>.broadcast();
   }
@@ -73,6 +77,27 @@ class ChartaService {
 
   void _usoresListenerRenovare() {
     _usoresController.add(List.from(_usores.values));
+  }
+
+  void mittereUsor({
+    required String nomen,
+    required String colorHex,
+    required Position position
+   
+  }) {
+    _socket?.emit('CLIENT REGISTER', {
+      'nomen': nomen,
+      'color': colorHex,
+      'lng': position.lng,
+      'lat': position.lat,
+    });
+  }
+
+  void mitterePositio(Position position) {
+    _socket?.emit('CLIENT MOVE', {
+      'lng': position.lng,
+      'lat': position.lat,
+    });
   }
 
   void finire() {
