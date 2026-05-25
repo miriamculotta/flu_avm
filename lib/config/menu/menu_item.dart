@@ -12,7 +12,6 @@ class MenuItem {
     required this.link,
     required this.icon,
   });
-
 }
 
 const appMenuItems = <MenuItem>[
@@ -21,21 +20,26 @@ const appMenuItems = <MenuItem>[
     subtitulus: 'Introducción a Riverpod',
     link: '/numerator-river',
     icon: Icons.add,
-  ), 
+  ),
 
   MenuItem(
     titulus: 'Bandas musicales',
     subtitulus: 'Gráficos Pie Chart y votaciones',
     link: '/bands',
     icon: Icons.music_note_outlined,
-  ), 
+  ),
 
-   MenuItem(
+  MenuItem(
     titulus: 'Mapas',
     subtitulus: 'Localización de usuarios',
     link: '/charta',
     icon: Icons.map_outlined,
-  ), 
+  ),
 
-
+  MenuItem(
+    titulus: 'Poke Appi',
+    subtitulus: 'Peticiones http a una API',
+    link: '/request',
+    icon: Icons.catching_pokemon,
+  ),
 ];
