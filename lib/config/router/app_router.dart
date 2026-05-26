@@ -5,14 +5,21 @@ final appRouter = GoRouter(
   initialLocation: '/',
   routes: <RouteBase>[
     GoRoute(path: '/', builder: (context, state) => const WelcomeScreen()),
+
     GoRoute(path: '/home', builder: (context, state) => const DomusScreen()),
+
+    // Numerator
     GoRoute(
       path: '/numerator-river',
       builder: (context, state) => const NumeratorScreen(),
     ),
+
+    // Bands
     GoRoute(path: '/bands', builder: (context, state) => const BandsScreen()),
 
+    // Charta
     GoRoute(path: '/charta', builder: (context, state) => const ChartaScreen()),
+
     GoRoute(
       path: '/request',
       builder: (context, state) => const PokemonsScreen(),
@@ -21,7 +28,7 @@ final appRouter = GoRouter(
           path: ':id',
           builder: (context, state) {
             final id = state.pathParameters['id'] ?? '1';
-            return PokemonScreen(pokemon_id: id);
+            return PokemonScreen(pokemonId: id);
           },
         ),
       ],
