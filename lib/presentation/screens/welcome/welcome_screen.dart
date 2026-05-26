@@ -1,6 +1,7 @@
 import 'package:flu_avm/presentation/providers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 class WelcomeScreen extends ConsumerWidget {
   const WelcomeScreen({super.key});
@@ -263,7 +264,9 @@ class _FooterSection extends StatelessWidget {
         const Text('MIRIAM', style: TextStyle(fontSize: 14)),
         const SizedBox(height: 20),
         ElevatedButton(
-          onPressed: () {},
+          onPressed: () {
+            context.push('/home');
+          },
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
             shape: RoundedRectangleBorder(
