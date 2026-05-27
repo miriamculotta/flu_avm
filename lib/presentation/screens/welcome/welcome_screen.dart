@@ -216,14 +216,16 @@ class _CardsSection extends StatelessWidget {
             image: 'assets/images/mapa.jpg',
             title: 'Mapas',
             subtitle: 'Ubicación en tiempo real',
+            route: '/charta',
           ),
         ),
-        SizedBox(width: 20), // espacio entre tarjetas
+        SizedBox(width: 20),
         Expanded(
           child: _FeatureCard(
             image: 'assets/images/votaciones.jpg',
             title: 'Votaciones',
             subtitle: 'Gráfico que se actualiza',
+            route: '/bands',
           ),
         ),
       ],
@@ -235,67 +237,72 @@ class _FeatureCard extends StatelessWidget {
   final String image;
   final String title;
   final String subtitle;
+  final String route;
 
   const _FeatureCard({
     required this.image,
     required this.title,
     required this.subtitle,
+    required this.route,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+    return GestureDetector(
+      onTap: () => context.push(route),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
 
-        // relieve suave
-        boxShadow: [
-          BoxShadow(
-            color: Color(0x1F000000),
-            blurRadius: 6,
-            offset: const Offset(2, 3),
+          // relieve suave
+          boxShadow: [
+            BoxShadow(
+              color: Color(0x1F000000),
+              blurRadius: 6,
+              offset: const Offset(2, 3),
+            ),
+          ],
+
+          // ⭐ Borde violeta (como en tu boceto)
+          border: Border.all(
+            color: Colors.deepPurple, // ← AQUÍ EL VIOLETA
+            width: 1.2,
           ),
-        ],
-
-        // ⭐ Borde violeta (como en tu boceto)
-        border: Border.all(
-          color: Colors.deepPurple, // ← AQUÍ EL VIOLETA
-          width: 1.2,
         ),
-      ),
-      child: Column(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Image.asset(
-              image,
-              height: 100,
-              width: double.infinity,
-              fit: BoxFit.cover,
+        child: Column(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.asset(
+                image,
+                height: 100,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
 
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
 
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
             ),
-          ),
 
-          const SizedBox(height: 4),
+            const SizedBox(height: 4),
 
-          Text(
-            subtitle,
-            style: const TextStyle(fontSize: 13, color: Colors.black87),
-            textAlign: TextAlign.center,
-          ),
-        ],
+            Text(
+              subtitle,
+              style: const TextStyle(fontSize: 13, color: Colors.black87),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }
