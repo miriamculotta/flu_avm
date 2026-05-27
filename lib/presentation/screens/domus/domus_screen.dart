@@ -10,29 +10,36 @@ class DomusScreen extends ConsumerWidget {
   const DomusScreen({super.key});
 
   @override
-
   Widget build(BuildContext context, WidgetRef ref) {
-
     final bool estTenebrisModus = ref.watch(estTenebrisModusProvider);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Flu Avm App'),
         actions: [
           IconButton(
             onPressed: () {
-
-              ref.read(estTenebrisModusProvider.notifier).state = !estTenebrisModus;
-            }, 
+              ref.read(estTenebrisModusProvider.notifier).state =
+                  !estTenebrisModus;
+            },
             icon: Icon(
-              estTenebrisModus 
-              ? Icons.dark_mode_outlined
-              : Icons.light_mode_outlined
+              estTenebrisModus
+                  ? Icons.dark_mode_outlined
+                  : Icons.light_mode_outlined,
             ),
-          )
+          ),
         ],
       ),
-      body: _DomusView(),
+      body: Column(
+        children: [
+          Image.asset(
+            'assets/images/valencia.jpg',
+            fit: BoxFit.cover,
+            width: double.infinity,
+          ),
+          Expanded(child: _DomusView()),
+        ],
+      ),
     );
   }
 }
@@ -41,33 +48,24 @@ class _DomusView extends StatelessWidget {
   const _DomusView();
 
   @override
-
   Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: appMenuItems.length,
       itemBuilder: (context, index) {
         final menuItem = appMenuItems[index];
-        return _PropriumListTile(
-          menuItem: menuItem,
-        );
-      }
+        return _PropriumListTile(menuItem: menuItem);
+      },
     );
   }
 }
 
 class _PropriumListTile extends StatelessWidget {
-
   final MenuItem menuItem;
 
-  const _PropriumListTile({
-    required this.menuItem
-    });
-
+  const _PropriumListTile({required this.menuItem});
 
   @override
-
   Widget build(BuildContext context) {
-
     final colorum = Theme.of(context).colorScheme;
 
     return ListTile(
@@ -75,19 +73,17 @@ class _PropriumListTile extends StatelessWidget {
       subtitle: Text(menuItem.subtitulus),
       trailing: Icon(Icons.arrow_forward_ios_rounded, color: colorum.primary),
       leading: CircleAvatar(
-        backgroundColor: Color.fromARGB(Theme.of(context).brightness == Brightness.dark ? 200 : 100,
-        math.Random().nextInt(255),
-        math.Random().nextInt(255),
-        math.Random().nextInt(255),
+        backgroundColor: Color.fromARGB(
+          Theme.of(context).brightness == Brightness.dark ? 200 : 100,
+          math.Random().nextInt(255),
+          math.Random().nextInt(255),
+          math.Random().nextInt(255),
         ),
-        child: Icon(
-          menuItem.icon,
-          color: Colors.black,
-        )
+        child: Icon(menuItem.icon, color: Colors.black),
       ),
       onTap: () {
         context.push(menuItem.link);
       },
-    ); 
+    );
   }
 }
