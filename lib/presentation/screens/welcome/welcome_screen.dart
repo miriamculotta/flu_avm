@@ -11,20 +11,20 @@ class WelcomeScreen extends ConsumerWidget {
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 40),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: const [
               _HeaderSection(),
-              SizedBox(height: 30),
-              _MainImagesSection(),
-              SizedBox(height: 30),
-              _StatusSection(),
-              SizedBox(height: 20),
-              _TitleDescriptionSection(),
-              SizedBox(height: 30),
-              _CardsSection(),
               SizedBox(height: 40),
+              _MainImagesSection(),
+              SizedBox(height: 40),
+              _StatusSection(),
+              SizedBox(height: 30),
+              _TitleDescriptionSection(),
+              SizedBox(height: 40),
+              _CardsSection(),
+              SizedBox(height: 60),
               _FooterSection(),
             ],
           ),
@@ -97,14 +97,35 @@ class _MainImagesSection extends StatelessWidget {
           ),
         ),
 
-        // Puntos (sin cuadrado)
         Expanded(
-          child: Center(
-            child: Image.asset(
-              'assets/images/puntos.png',
-              height: 40,
-              fit: BoxFit.contain,
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              // Recuadro WS
+              Container(
+                margin: const EdgeInsets.only(bottom: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.deepPurple.shade100,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Text(
+                  'WS',
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                ),
+              ),
+
+              const SizedBox(height: 4), // ← ANTES ERA 20
+              // Puntos
+              Image.asset(
+                'assets/images/puntos.png',
+                height: 40,
+                fit: BoxFit.contain,
+              ),
+            ],
           ),
         ),
 
@@ -136,16 +157,25 @@ class _StatusSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        '● CONECTADO',
-        style: TextStyle(
-          color: Colors.green.shade600,
-          fontWeight: FontWeight.bold,
-          fontSize: 18,
-          letterSpacing: 1.2,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: Colors.green.shade100, // VERDE CLARO
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: const Text(
+            '● CONECTADO',
+            style: TextStyle(
+              color: Color.fromARGB(255, 34, 131, 37),
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 }
@@ -164,7 +194,7 @@ class _TitleDescriptionSection extends StatelessWidget {
         ),
         SizedBox(height: 10),
         Text(
-          'Aprende a construir apps con datos en tiempo real en Flutter.\n'
+          'Aprende a construir apps con datos en tiempo real en Flutter. '
           'Dos ejemplos prácticos te esperan dentro.',
           style: TextStyle(fontSize: 16),
         ),
@@ -178,18 +208,23 @@ class _CardsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        _FeatureCard(
-          image: 'assets/images/mapa.jpg',
-          title: 'Mapas',
-          subtitle: 'Ubicación en tiempo real',
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: const [
+        Expanded(
+          child: _FeatureCard(
+            image: 'assets/images/mapa.jpg',
+            title: 'Mapas',
+            subtitle: 'Ubicación en tiempo real',
+          ),
         ),
-        const SizedBox(height: 20),
-        _FeatureCard(
-          image: 'assets/images/votaciones.jpg',
-          title: 'Votaciones',
-          subtitle: 'Gráfico que se actualiza',
+        SizedBox(width: 20), // espacio entre tarjetas
+        Expanded(
+          child: _FeatureCard(
+            image: 'assets/images/votaciones.jpg',
+            title: 'Votaciones',
+            subtitle: 'Gráfico que se actualiza',
+          ),
         ),
       ],
     );
@@ -210,38 +245,55 @@ class _FeatureCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color: Colors.grey.shade200,
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+
+        // relieve suave
+        boxShadow: [
+          BoxShadow(
+            color: Color(0x1F000000),
+            blurRadius: 6,
+            offset: const Offset(2, 3),
+          ),
+        ],
+
+        // ⭐ Borde violeta (como en tu boceto)
+        border: Border.all(
+          color: Colors.deepPurple, // ← AQUÍ EL VIOLETA
+          width: 1.2,
+        ),
       ),
-      child: Row(
+      child: Column(
         children: [
           ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(16),
-              bottomLeft: Radius.circular(16),
-            ),
+            borderRadius: BorderRadius.circular(8),
             child: Image.asset(
               image,
-              width: 120,
               height: 100,
+              width: double.infinity,
               fit: BoxFit.cover,
             ),
           ),
-          const SizedBox(width: 16),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(subtitle, style: const TextStyle(fontSize: 14)),
-            ],
+
+          const SizedBox(height: 12),
+
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+
+          const SizedBox(height: 4),
+
+          Text(
+            subtitle,
+            style: const TextStyle(fontSize: 13, color: Colors.black87),
+            textAlign: TextAlign.center,
           ),
         ],
       ),
@@ -256,24 +308,76 @@ class _FooterSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Text(
-          '5 PANTALLAS   •   2 WEBSOCKETS',
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        // FILA DE RECUADROS
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            // Recuadro 1: 5 pantallas
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.deepPurple.shade100,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Text(
+                '5 PANTALLAS',
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              ),
+            ),
+
+            // Recuadro 2: 2 websockets
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.deepPurple.shade100,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Text(
+                '2 WEBSOCKETS',
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              ),
+            ),
+
+            // Recuadro 3: Nombre
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.deepPurple.shade100,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Text(
+                'MIRIAM',
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 6),
-        const Text('MIRIAM', style: TextStyle(fontSize: 14)),
-        const SizedBox(height: 20),
+
+        const SizedBox(height: 80),
+
         ElevatedButton(
           onPressed: () {
             context.push('/home');
           },
           style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+            foregroundColor: Colors.black,
+            textStyle: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
           ),
-          child: const Text('Comenzar'),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: const [
+              Text('Comenzar'),
+              SizedBox(width: 8),
+              Icon(Icons.arrow_forward_rounded, size: 20),
+            ],
+          ),
         ),
       ],
     );
