@@ -7,15 +7,19 @@ class TarotService {
 
   Future<List<TarotApiCard>> getRandomCards(int n) async {
     final response = await http.get(Uri.parse('$baseUrl/cards/random?n=$n'));
-
-    if (response.statusCode != 200) {
-      throw Exception('Error API Tarot');
-    }
-
+    if (response.statusCode != 200) throw Exception('Error API Tarot');
     final decoded = jsonDecode(response.body);
-
     final List list = decoded is List ? decoded : decoded['cards'];
+    return list
+        .map((e) => TarotApiCard.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
 
+  Future<List<TarotApiCard>> getAllCards() async {
+    final response = await http.get(Uri.parse('$baseUrl/cards'));
+    if (response.statusCode != 200) throw Exception('Error API Tarot');
+    final decoded = jsonDecode(response.body);
+    final List list = decoded is List ? decoded : decoded['cards'];
     return list
         .map((e) => TarotApiCard.fromJson(e as Map<String, dynamic>))
         .toList();
