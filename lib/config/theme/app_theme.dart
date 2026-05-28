@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'paleta_colores.dart';
 
 class AppTheme {
-
-  final Color electusColor;
   final bool tenebrisModusEst;
 
-  AppTheme({
-    this.electusColor = const Color(0xFF1E1C36),
-    this.tenebrisModusEst = false
-  });
+  AppTheme({this.tenebrisModusEst = false});
 
-  ThemeData getTheme() => ThemeData (
-    colorSchemeSeed: electusColor,
-    brightness: tenebrisModusEst ? Brightness.dark : Brightness.light,
-    appBarTheme: AppBarTheme(
-      backgroundColor: tenebrisModusEst ? electusColor : electusColor.withAlpha(80),
-      centerTitle: false,
-     ),
-    textTheme: TextTheme(
-      titleLarge: GoogleFonts.montserratAlternates()
-    ),
+  ThemeData getTheme() {
+    final scheme = tenebrisModusEst ? darkPalette : lightPalette;
 
-  );
-
+    return ThemeData(
+      colorScheme: scheme,
+      brightness: scheme.brightness,
+      useMaterial3: true,
+      appBarTheme: AppBarTheme(
+        backgroundColor: scheme.primary,
+        foregroundColor: scheme.onPrimary,
+      ),
+      textTheme: GoogleFonts.poppinsTextTheme().copyWith(
+        titleLarge: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+        bodyMedium: GoogleFonts.inter(),
+      ),
+    );
+  }
 }
