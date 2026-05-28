@@ -33,5 +33,6 @@ final appRouter = GoRouter(
         ),
       ],
     ),
+    GoRoute(path: '/tarot', builder: (context, state) => const TarotScreen()),
   ],
 );

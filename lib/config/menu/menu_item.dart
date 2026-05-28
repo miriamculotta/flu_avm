@@ -42,4 +42,10 @@ const appMenuItems = <MenuItem>[
     link: '/request',
     icon: Icons.catching_pokemon,
   ),
+  MenuItem(
+    titulus: 'Tarot',
+    subtitulus: 'Cartas y predicciones',
+    link: '/tarot',
+    icon: Icons.auto_awesome_rounded,
+  ),
 ];

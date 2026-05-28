@@ -1,116 +1,80 @@
-import 'package:flutter/material.dart';
-import 'dart:math';
+import 'dart:math' as math;
 
-class TarotScreen extends StatefulWidget {
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../providers/tarot_provider.dart';
+
+class TarotScreen extends ConsumerWidget {
   const TarotScreen({super.key});
 
   @override
-  State<TarotScreen> createState() => _TarotScreenState();
-}
-
-class _TarotScreenState extends State<TarotScreen> {
-  final List<Map<String, String>> cartas = [
-    {
-      'titulo': 'La Estrella',
-      'descripcion': 'Esperanza, claridad, guía interior.',
-      'imagen': 'assets/images/tarot/estrella.png',
-    },
-    {
-      'titulo': 'La Luna',
-      'descripcion': 'Intuición, misterio, emociones profundas.',
-      'imagen': 'assets/images/tarot/luna.png',
-    },
-    {
-      'titulo': 'El Sol',
-      'descripcion': 'Éxito, energía, claridad total.',
-      'imagen': 'assets/images/tarot/sol.png',
-    },
-  ];
-
-  Map<String, String>? cartaActual;
-
-  void sacarCarta() {
-    final random = Random();
-    setState(() {
-      cartaActual = cartas[random.nextInt(cartas.length)];
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final tarotAsync = ref.watch(tarotCardProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Tarot')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 400),
-              curve: Curves.easeOut,
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: scheme.primaryContainer,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: scheme.shadow.withOpacity(0.2),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              width: 220,
-              height: 350,
-              child: cartaActual == null
-                  ? Center(
-                      child: Text(
-                        'Saca una carta',
-                        style: TextStyle(
-                          color: scheme.onPrimaryContainer,
-                          fontSize: 18,
+
+      body: tarotAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+
+        error: (e, _) => Center(child: Text('Error: $e')),
+
+        data: (cards) {
+          return ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: cards.length,
+
+            itemBuilder: (context, index) {
+              final card = cards[index];
+
+              return Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      Transform.rotate(
+                        angle: card.reversed ? math.pi : 0,
+                        child: Image.network(
+                          card.image,
+                          height: 220,
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Icon(
+                              Icons.broken_image,
+                              size: 80,
+                              color: Colors.grey,
+                            );
+                          },
+                        ),
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      Text(
+                        card.name,
+                        style: const TextStyle(
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                    )
-                  : Column(
-                      children: [
-                        Expanded(
-                          child: Image.asset(
-                            cartaActual!['imagen']!,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          cartaActual!['titulo']!,
-                          style: TextStyle(
-                            color: scheme.onPrimaryContainer,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Text(
-                          cartaActual!['descripcion']!,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: scheme.onPrimaryContainer,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-            ),
 
-            const SizedBox(height: 40),
+                      const SizedBox(height: 8),
 
-            ElevatedButton(
-              onPressed: sacarCarta,
-              child: const Text('Sacar carta'),
-            ),
-          ],
-        ),
+                      Text(card.meaning, textAlign: TextAlign.center),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      ),
+
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          ref.invalidate(tarotCardProvider);
+        },
+        child: const Icon(Icons.refresh),
       ),
     );
   }
